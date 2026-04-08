@@ -40,21 +40,20 @@ Genera un informe final en texto a partir del archivo de logs que contiene:
 - RECOMENDACIONES
 - ERRORES
 
-El informe se guarda como:  
-`informe_bastionado.txt`
+El informe se guarda en la carpeta donde se genere el script como `informe_bastionado.txt`.
 
 ## Requisitos del sistema
-- Linux (Ubuntu, Debian, Kali…)
+- Ser Linux (Ubuntu, Debian, Kali…)
 - Tener Python 3
 - Permisos de superusuario (sudo)
 
 ### Servicios y herramientas necesarias
-- SSH  
-- UFW (firewall)  
-- systemctl  
-- ss (para detección de puertos)  
-- awk (para análisis de contraseñas)  
-- vsftpd (opcional, solo si se quiere auditar/deshabilitar FTP)
+- SSH
+- UFW (firewall)
+- systemctl
+- ss (para detección de puertos)
+- awk (para análisis de contraseñas)
+- vsftpd (para FTP)
 
 ## Uso
 
