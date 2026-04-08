@@ -28,8 +28,7 @@ Aplica las medidas de seguridad necesarias, según lo que se escoja en el menú,
 - Forzar contraseñas seguras
 - Actualizar el sistema
 
-Este script registra todas las acciones en:  
-`/var/log/bastionado.log`
+Este script registra todas las acciones en: `/var/log/bastionado.log`
 
 ### informe.py
 Genera un informe final en texto a partir del archivo de logs que contiene:
