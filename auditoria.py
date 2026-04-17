@@ -1,4 +1,5 @@
-import os, sys    # para poder ejecutar comandos en el sistema operativo y gestionar las salidas del script
+import os         # para poder ejecutar comandos en el sistema operativo
+import sys        # para gestionar las salidas del script
 import subprocess # para ejecutar comandos del sistema de forma más segura que os.system()
 import re         # para usar expresiones regulares
 
@@ -37,7 +38,7 @@ def analizar_ssh():
     titulo("----· Analizando la configuración de SSH ·----")
 
     try:
-        # abrimos el archivo de configuracion de SSH
+        # abrimos el archivo de configuracion de SSH y lo leemos
         with open("/etc/ssh/sshd_config", "r") as f:
             lineas = f.readlines()
 
@@ -46,14 +47,14 @@ def analizar_ssh():
         puerto_ssh = "22"  # el puerto por defecto de ssh
 
         for linea in lineas:
-            # para eliminar comentarios y espacios:
+            # para eliminar comentarios y espacios en la lectura:
             linea = linea.split("#", 1)[0].strip()
             if linea == "":
                 continue # saltar las lineas que esten vacias
 
             # convertimos la linea obtenida a minusculas para mejor deteccion
             if linea.lower().startswith("permitrootlogin"):
-                login_root = linea.split()[1]  # esto obtiene el valor yes o no
+                login_root = linea.split()[1]  # esto obtiene el valor yes (activado) o no (desactivado)
 
             if linea.lower().startswith("passwordauthentication"):
                 pwd_aut = linea.split()[1]  # esto obtiene el valor yes o no
@@ -91,8 +92,8 @@ def analizar_ssh():
         else:
             ok(f"El puerto SSH está modificado ({puerto_ssh})\n")
 
-    except Exception as e:
-        error(f"No se pudo leer sshd_config: {e}\n")  # mostramos el error con "{e}"
+    except Exception as error_detectado:
+        error(f"No se pudo leer sshd_config: {error_detectado}\n")  # mostramos el error detectado
 
 
 # ---------------- FIREWALL ----------------
@@ -193,8 +194,8 @@ def analizar_puertos():
         print()
         aviso("Revisar que solo estén abiertos los puertos necesarios\n")
 
-    except Exception as e:
-        error(f"No se pudieron analizar los puertos: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudieron analizar los puertos: {error_detectado}")
 
 
 # ---------------- FTP ----------------
@@ -224,8 +225,8 @@ def analizar_ftp():
                 info("No se pudo verificar la configuración de FTP\n")
         else:
             ok("El servicio FTP no está activo\n")
-    except Exception as e:
-        error(f"Error comprobando FTP: {e}\n")
+    except Exception as error_detectado:
+        error(f"Error comprobando FTP: {error_detectado}\n")
 
 
 # ---------------- USUARIOS ----------------
