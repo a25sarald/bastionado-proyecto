@@ -118,8 +118,8 @@ def bast_ssh():
         else:
             error(f"No se pudo reiniciar SSH: {result.stderr.decode()}")
 
-    except Exception as e:
-        error(f"No se pudo bastionar el SSH: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudo bastionar el SSH: {error_detectado}")
 
 
 # ---------------- FIREWALL ----------------
@@ -138,8 +138,8 @@ def bast_firewall():
             ok("Firewall activado correctamente")
         else:
             ok("Firewall ya estaba activo")
-    except Exception as e:
-        error(f"No se pudo bastionar firewall: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudo bastionar firewall: {error_detectado}")
 
 
 # ---------------- PUERTOS ----------------
@@ -176,8 +176,8 @@ def cerrar_puertos_innecesarios():
             else:
                 ok(f"Puerto {puerto} permitido")
 
-    except Exception as e:
-        error(f"No se pudieron analizar los puertos: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudieron analizar los puertos: {error_detectado}")
 
 
 # ---------------- FTP ----------------
@@ -196,8 +196,8 @@ def bast_ftp():
             ok("FTP desactivado")
         else:
             ok("FTP ya estaba desactivado")
-    except Exception as e:
-        error(f"No se pudo bastionar FTP: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudo bastionar FTP: {error_detectado}")
 
 
 # ---------------- USUARIOS ----------------
@@ -238,8 +238,8 @@ def bast_usuarios():
         if usuarios_uid0 == ["root"]:
             ok("Solo root tiene UID 0\n")
 
-    except Exception as e:
-        error(f"No se pudieron bastionar los usuarios: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudieron bastionar los usuarios: {error_detectado}")
 
 
 # ---------------- CONTRASEÑAS ----------------
@@ -259,8 +259,8 @@ def bast_contraseñas():
                 ok(f"Contraseña establecida para {usuario}")
         else:
             ok("No hay usuarios sin contraseña")
-    except Exception as e:
-        error(f"No se pudo bastionar contraseñas: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudo bastionar contraseñas: {error_detectado}")
 
 
 # ---------------- ACTUALIZAR ----------------
@@ -271,8 +271,8 @@ def actualizar_sistema():
         subprocess.run(["apt", "update"])
         subprocess.run(["apt", "upgrade", "-y"])
         ok("\nSistema actualizado")
-    except Exception as e:
-        error(f"No se pudo actualizar el sistema: {e}")
+    except Exception as error_detectado:
+        error(f"No se pudo actualizar el sistema: {error_detectado}")
 
 
 # ---------------- MENU ----------------
