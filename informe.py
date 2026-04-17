@@ -45,7 +45,7 @@ def generar_informe():
             fecha = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             informe.write(f"Fecha de creación: {fecha}\n\n")
 
-            # resumen general
+            # añadimos un resumen general
             informe.write("-----· RESUMEN ·-----\n")
             informe.write(f"OK: {len(ok)}\n")
             informe.write(f"Avisos: {len(avisos)}\n")
@@ -103,8 +103,7 @@ def generar_informe():
 
         print(f"\033[92m[OK]\033[0m Informe generado correctamente en: {archivo_informe}")
 
-    except Exception as e:
-        print(f"\033[91m[ERROR]\033[0m No se pudo generar el informe: {e}")
+    except Exception as error_detectado:
+        print(f"\033[91m[ERROR]\033[0m No se pudo generar el informe: {error_detectado}")
 
 generar_informe()
-
