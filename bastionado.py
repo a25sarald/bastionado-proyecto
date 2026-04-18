@@ -6,13 +6,13 @@ from datetime import datetime # importamos la fecha y hora del sistema para regi
 PUERTO_SSH = "22"
 
 # -------- logging --------
-# ruta donde se van a guardar los logs de los cambios que se hagan
+# ruta donde se van a guardar los logs de los cambios que se hagan y las vulnerabilidades detectadas
 LOG_FILE = "/var/log/bastionado.log"
 
 # elegimos el formato: fecha - hora - mensaje
 def log(msg):
-    with open(LOG_FILE, "a") as f:
-        f.write(f"{datetime.now()} - {msg}\n")
+    with open(LOG_FILE, "a") as formato:
+        formato.write(f"{datetime.now()} - {msg}\n")
 
 
 # -------- colores para los mensajes  --------
@@ -61,7 +61,7 @@ def bast_ssh():
             config = f.read()
 
         # ---- login root ----
-        # si PermitRootLogin esta habilitado, lo deshabilitamos
+        # si PermitRootLogin está habilitado, lo deshabilitamos
         if "PermitRootLogin yes" in config:
             subprocess.run(["sed", "-i", "s/^PermitRootLogin.*/PermitRootLogin no/", ssh_conf])
             aviso("Root login estaba habilitado")
