@@ -47,7 +47,7 @@ def analizar_ssh():
         puerto_ssh = "22"  # el puerto por defecto de ssh
 
         for linea in lineas:
-            # para eliminar comentarios y espacios en la lectura:
+            # para eliminar comentarios y espacios durante la lectura:
             linea = linea.split("#", 1)[0].strip()
             if linea == "":
                 continue # saltar las lineas que esten vacias
@@ -290,5 +290,3 @@ def run_auditoria():
     titulo("|=====================|\n|     AUDITORÍA FINALIZADA     |\n|=====================|\n")
 
 run_auditoria()
-
-
