@@ -4,7 +4,7 @@ import subprocess # para ejecutar comandos del sistema de forma más segura
 import re         # para usar expresiones regulares
 
 # comprobamos que el script se esté ejecutando como root
-if os.geteuid() != 0:
+if os.geteuid() != 0:  # 0 es el UID de root 
     print("\033[93m[!]\033[0m Este script necesita permisos de superusuario. Ejecutalo con sudo.")
     sys.exit(1)
 
@@ -150,6 +150,7 @@ def puerto_abierto_ufw(puerto):
 
 # lista de puertos SSH alternativos permitidos
 puertos_ssh = ["122", "322", "422"]
+
 def analizar_puertos():
     titulo("----· Analizando los puertos abiertos ·----")
 
@@ -180,7 +181,6 @@ def analizar_puertos():
 
             # avisos
             # permitimos los 3 puertos indicados y los que se añadan en la variable "puertos_ssh"
-            # (la variable "puertos_ssh" está definida al inicio del apartado de puertos)
             if p not in ["22", "80", "443", *puertos_ssh]:
                 if accesible == "SI":
                     aviso(f"Puerto {p} abierto y accesible")
@@ -205,14 +205,14 @@ def analizar_ftp():
     try:
     # para comprobar si el servicio vsftpd (servidor para ftp) estaá activo
         res = subprocess.run(["systemctl", "is-active", "vsftpd"], capture_output=True, text=True)
-        # si est activo, revisamos su configuracion
+        # si esta activo, revisamos su configuracion
         if res.returncode == 0 and "active" in res.stdout:
             aviso("Servicio FTP activo")
             riesgo("FTP transmite datos sin cifrar")
             recomendacion("Deshabilitar el FTP o usar SFTP\n")
 
             try:
-                # evisamos la configuracion de ftp
+                # revisamos la configuracion de ftp
                 with open("/etc/vsftpd.conf", "r") as f:
                     config = f.read()
                     if "anonymous_enable=YES" in config: # comprobamos el acceso anónimo
@@ -239,7 +239,7 @@ def analizar_usuarios():
     with open("/etc/passwd", "r") as f:
         for line in f:
             if ":0:" in line:
-                usuario = line.split(":")[0]
+                usuario = line.split(":")[0] # separamos el usuario del su id
                 usuarios_uid0.append(usuario)
 
     # si solo lo tiene root, es correcto
@@ -260,6 +260,7 @@ def analizar_contraseñas():
 
     try:
         # para buscar usuarios con el campo de contraseña vacio en /etc/shadow
+        # separamos por ":" y buscamos el segundo campo (contraseña) que esté vacío
         salida = (os.popen("awk -F: '($2==\"\"){print $1}' /etc/shadow").read().splitlines())
 
         if salida:
