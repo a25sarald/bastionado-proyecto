@@ -1,15 +1,22 @@
 import os         # para poder ejecutar comandos en el sistema operativo
+import sys        # para gestionar las salidas del script
 import shutil     # para copiar, mover o eliminar archivos de manera segura
 import subprocess # para ejecutar comandos del sistema de forma mas segura
 import re         # para usar expresiones regulares
 from datetime import datetime # importamos la fecha y hora del sistema para registrarlas en los logs
 PUERTO_SSH = "22"
 
+# comprobamos que el script se esté ejecutando como root
+if os.geteuid() != 0:  # 0 es el UID de root 
+    print("\033[93m[!]\033[0m Este script necesita permisos de superusuario. Ejecutalo con sudo.")
+    sys.exit(1)
+
 # -------- logging --------
 # ruta donde se van a guardar los logs de los cambios que se hagan y las vulnerabilidades detectadas
 LOG_FILE = "/var/log/bastionado.log"
 
 # elegimos el formato: fecha - hora - mensaje
+# esta funcion escribe en el archivo de logs la fecha y hora + el mensaje correspondiente
 def log(msg):
     with open(LOG_FILE, "a") as formato:
         formato.write(f"{datetime.now()} - {msg}\n")
@@ -63,6 +70,7 @@ def bast_ssh():
         # ---- login root ----
         # si PermitRootLogin está habilitado, lo deshabilitamos
         if "PermitRootLogin yes" in config:
+            # se busca la linea y se remplaza por "PermitRootLogin no"
             subprocess.run(["sed", "-i", "s/^PermitRootLogin.*/PermitRootLogin no/", ssh_conf])
             aviso("Root login estaba habilitado")
             riesgo("Permite acceso directo como root por SSH")
@@ -74,6 +82,7 @@ def bast_ssh():
         # ---- aut. contraseña ----
         # si la autenticacion por contraseña esta habilitada, la deshabilitamos
         if "PasswordAuthentication yes" in config:
+            # se busca la linea y se remplaza por "PasswordAuthentication no"
             subprocess.run(["sed", "-i", "s/^PasswordAuthentication.*/PasswordAuthentication no/", ssh_conf])
             aviso("Autenticación por contraseña habilitada")
             riesgo("Vulnerable a ataques de fuerza bruta")
@@ -83,13 +92,13 @@ def bast_ssh():
             ok("La autenticación por contraseña ya es segura\n")
 
         # ---- puerto ----
-        # cambiamos el puerto si está el predeterminado (22)
+        # damos opcion a cambiar el puerto si está configurado el predeterminado (22)
         # con esto se pueden reducir escaneos automaticos
         while True:
             aviso("Puerto SSH por defecto")
             riesgo("Más expuesto a escaneos automáticos")
             recomendacion(f"Cambiar el puerto SSH a uno nuevo")
-            print(f"Puertos permitidos para SSH: {puertos_validos_ssh}")
+            print(f"Puertos permitidos para SSH: {puertos_validos_ssh}") # lista de puertos validos, definida arriba
             nuevo_puerto = input("Selecciona nuevo puerto SSH: ")
             if nuevo_puerto in puertos_validos_ssh:
                 break
@@ -98,6 +107,7 @@ def bast_ssh():
 
         # reemplazar o añadir la linea "Port" si no existe
         if "Port " in config:
+            # se busca la linea y se remplaza por "Port + el puerto escogido"
             subprocess.run(["sed", "-i", f"s/^#\\?Port.*/Port {nuevo_puerto}/", ssh_conf])
         else:
             with open(ssh_conf, "a") as f:
@@ -219,10 +229,10 @@ def bast_usuarios():
                 riesgo("Usuario con privilegios de root no autorizado")
                 recomendacion("Se bloqueará el acceso del usuario")
 
-                # bloqueamos la contraseña
+                # bloqueamos la contraseña con "-l"
                 res_passwd = subprocess.run(["passwd", "-l", u], capture_output=True, text=True)
 
-                # impedimos el inicio de sesion
+                # impedimos el inicio de sesion con "-s"
                 res_shell = subprocess.run(["usermod", "-s", "/usr/sbin/nologin", u], capture_output=True, text=True)
 
                 # comprobamos resultados
@@ -247,7 +257,7 @@ def bast_contraseñas():
     titulo("----· Bastionado de contraseñas ·----")
     try:
         # buscamos usuarios sin contraseña (con el campo vacio)
-        # $1 es el campo del nombre de usuairo, y $2 el de contraseña
+        # utilizando ":" como separador,$1 es el campo del nombre de usuairo, y $2 el de contraseña
         salida = subprocess.run("awk -F: '($2==\"\"){print $1}' /etc/shadow", shell=True, capture_output=True, text=True).stdout.splitlines()
         if salida:
             for usuario in salida:
@@ -277,6 +287,7 @@ def actualizar_sistema():
 
 # ---------------- MENU ----------------
 def menu_bastionado():
+    
     while True:
         titulo("|======================|\n|      MODO DE BASTIONADO      |\n|======================|")
 
@@ -314,5 +325,3 @@ def menu_bastionado():
     titulo("|=======================|\n|     BASTIONADO FINALIZADO    |\n|=======================|\n")
 
 menu_bastionado()
-
-
