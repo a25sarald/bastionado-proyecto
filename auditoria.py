@@ -1,6 +1,6 @@
 import os         # para poder ejecutar comandos en el sistema operativo
 import sys        # para gestionar las salidas del script
-import subprocess # para ejecutar comandos del sistema de forma más segura que os.system()
+import subprocess # para ejecutar comandos del sistema de forma más segura
 import re         # para usar expresiones regulares
 
 # comprobamos que el script se esté ejecutando como root
