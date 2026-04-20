@@ -51,6 +51,7 @@ def generar_informe():
             informe.write(f"Avisos: {len(avisos)}\n")
             informe.write(f"Riesgos: {len(riesgos)}\n")
             informe.write(f"Errores: {len(errores)}\n\n")
+            informe.write(f"Recomendaciones: {len(recomendaciones)}\n")
 
             # añadimos riesgos
             informe.write("-----· RIESGOS DETECTADOS ·-----\n")
